@@ -25,6 +25,9 @@ import javax.sql.DataSource;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+    @Autowired
+    private DataSource dataSource;
+
     public static final String SQL_LOGIN
             = "select username, password, active as enabled \n" +
             "from s_users where username = ?";
@@ -33,8 +36,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "from s_users u join s_user_role ur on u.id = ur.id_user\n" +
             "join s_roles r on ur.id_role = r.id\n" +
             "where u.username = ?";
-    @Autowired
-    private DataSource dataSource;
 
     @Autowired
     public void configurGlobal(AuthenticationManagerBuilder auth) throws Exception {
