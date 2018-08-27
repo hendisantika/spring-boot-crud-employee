@@ -1,5 +1,6 @@
 package com.hendisantika.springbootcrudemployee.config;
 
+import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
@@ -13,6 +14,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  * Time: 05.58
  * To change this template use File | Settings | File Templates.
  */
+
+@Configuration
 public class WebConfig extends WebMvcConfigurerAdapter {
 
     @Override
