@@ -43,7 +43,7 @@ public class EmployeeController {
 
     @RequestMapping("/hapus")
     public String hapus(@RequestParam("id") String id) {
-        employeeRepo.delete(id);
+        employeeRepo.deleteById(id);
         return "redirect:list";
     }
 
