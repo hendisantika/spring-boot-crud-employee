@@ -1,9 +1,5 @@
 package com.hendisantika.springbootcrudemployee.config;
 
-import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-
 /**
  * Created by IntelliJ IDEA.
  * Project : spring-boot-crud-employee
@@ -14,12 +10,17 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
  * Time: 05.58
  * To change this template use File | Settings | File Templates.
  */
-
-@Configuration
-public class WebConfig extends WebMvcConfigurerAdapter {
-
-    @Override
-    public void addViewControllers(ViewControllerRegistry registry) {
-        registry.addViewController("/login").setViewName("login");
-    }
-}
+//@EnableWebMvc
+//@Configuration
+//public class WebConfig implements WebMvcConfigurer {
+//
+//        @Override
+//    public void addViewControllers(ViewControllerRegistry registry) {
+//        registry.addViewController("/login").setViewName("login");
+//    }
+//
+//    @Bean
+//    public BCryptPasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder();
+//    }
+//}

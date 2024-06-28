@@ -3,7 +3,7 @@ package com.hendisantika.springbootcrudemployee.repository;
 import com.hendisantika.springbootcrudemployee.entity.Employee;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
  * Created by IntelliJ IDEA.
@@ -15,6 +15,6 @@ import org.springframework.data.repository.PagingAndSortingRepository;
  * Time: 05.56
  * To change this template use File | Settings | File Templates.
  */
-public interface EmployeeRepo extends PagingAndSortingRepository<Employee, String> {
+public interface EmployeeRepo extends JpaRepository<Employee, String> {
     Page<Employee> findByNamaContainingIgnoreCase(String nama, Pageable pageable);
 }

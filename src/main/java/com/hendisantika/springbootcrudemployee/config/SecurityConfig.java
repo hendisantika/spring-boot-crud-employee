@@ -4,10 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.LogoutConfigurer;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 
 import javax.sql.DataSource;
 
@@ -24,13 +27,18 @@ import javax.sql.DataSource;
 
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+@EnableMethodSecurity
+public class SecurityConfig {
     @Autowired
     private DataSource dataSource;
+
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
 
     public static final String SQL_LOGIN
             = "select username, password, active as enabled \n" +
             "from s_users where username = ?";
+
     public static final String SQL_PERMISSION
             = "select u.username, r.nama as authority\n" +
             "from s_users u join s_user_role ur on u.id = ur.id_user\n" +
@@ -38,38 +46,51 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             "where u.username = ?";
 
     @Autowired
-    public void configurGlobal(AuthenticationManagerBuilder auth) throws Exception {
+    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
         auth
-
                 .jdbcAuthentication()
                 .dataSource(dataSource)
                 .usersByUsernameQuery(SQL_LOGIN)
                 .authoritiesByUsernameQuery(SQL_PERMISSION)
-                .passwordEncoder(passwordEncoder()); // bcrypt
-
-    }
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-                .authorizeRequests()
-
-                .antMatchers("/js/**").permitAll()
-                .antMatchers("/css/**").permitAll()
-                .antMatchers("/fonts/**").permitAll()
-
-                .anyRequest().authenticated()
-                .and()
-                .formLogin()
-                .loginPage("/login").permitAll()
-                .defaultSuccessUrl("/employee/list", true)
-                .and()
-                .logout();
+                .passwordEncoder(passwordEncoder); // bcrypt
     }
 
     @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    public SecurityFilterChain configure(HttpSecurity http) throws Exception {
+//        http
+//
+//                .anyRequest().authenticated()
+//                .and()
+//                .formLogin()
+//                .loginPage("/login").permitAll()
+//                .defaultSuccessUrl("/employee/list", true)
+//                .and()
+//                .logout();
+
+        http
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(authorize ->
+                        authorize
+                                .requestMatchers("/js/**", "/css/**", "/fonts/**", "/login", "/login/**").permitAll()
+                                .anyRequest().authenticated()
+                )
+                .formLogin((form) -> form
+                        .loginPage("/login")
+                        .loginProcessingUrl("/login")
+                        .defaultSuccessUrl("/employee/list", true)
+                        .permitAll()
+                )
+                .logout(LogoutConfigurer::permitAll);
+        return http.build();
     }
 
+//    @Bean
+//    public BCryptPasswordEncoder passwordEncoder() {
+//        return new BCryptPasswordEncoder();
+//    }
+
+//    @Bean
+//    public WebSecurityCustomizer webSecurityCustomizer() {
+//        return (web) -> web.ignoring().requestMatchers("/login");
+//    }
 }
